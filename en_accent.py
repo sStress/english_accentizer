@@ -20,7 +20,9 @@ DOUBLE = ['access', 'address', 'contrast', 'contract', 'conflict', 'decrease', '
           'upset', 'compound', 'conduct', 'subject', 'desert','object', 'project', 'inject', 'permit', 
           'present', 'process', 'produce', 'protest','record', 'supply', 'transport']
 EXCEPTIONS = ['every', 'everything', 'everybody', 'everywhere', 'whatever', 'whoever',
-              'entry', 'entries', 'ended','forever','enough', 'english', 'however']
+              'entry', 'entries', 'ended','forever','enough', 'english', 'however', 'whenever', 'between', 'itself',
+             'enter', 'entering', 'eyes', 'within', 'outside', 'inside', 'upon', 'instead', 'into', 
+             'yourself', 'yourselves']
 
 def handleCiV(match):	  # encode [st] and i but not following vowel
     c1 = encode(match.group()[0])
@@ -278,7 +280,7 @@ class Syllabizer:
         return retstress
 
 def exception(word):
-        
+        res = []
         if word == 'every':
             res = ['E', 've', 'ry']
         if word == 'everything':
@@ -297,6 +299,8 @@ def exception(word):
             res = ['EN', 'ded']
         if word == 'forever':
             res = ['fo', 'REV', 'er']
+        if word == 'whenever':
+            res = ['whe', 'NE', 'ver']
         if word == 'enough':
             res = ['e', 'NOUGH']
         if word == 'whoever':
@@ -305,7 +309,31 @@ def exception(word):
             res = ['what', 'E','ver']
         if word == 'however':
             res = ['how', 'E','ver']
+        if word == 'between':
+            res = ['bet', 'WEEN']
+        if word == 'itself':
+            res = ['it', 'SELF']
+        if word == 'enter':
+            res = ['EN', 'ter']
+        if word == 'entering':
+            res = ['EN', 'ter', 'ing']
+        if word == 'eyes':
+            res = ['E', 'YES']
+        if word == 'within':
+            res = ['with', 'IN']
+        if word == 'outside':
+            res = ['out', 'SIDE']
+        if word == 'inside':
+            res = ['in', 'SIDE']
+        if word == 'into':
+            res = ['IN', 'to']
         binary = [int(syl.islower()) for syl in res]
+        if word == 'instead':
+            res = ['ins', 'TEAD']
+        if word == 'yourself':
+            res = ['your', 'SELF']
+        if word == 'yourselves':
+            res = ['your', 'SELVES']
         return res, binary    
     
 def Accent():
@@ -342,10 +370,17 @@ def Accent():
                                 line_stressed.append(result[0])
                                 list_stressed_syls.append(result[1])
                             else:
-                                res = s.Syllabize(w)
-                                res_bin = s.SyllList(w)
-                                line_stressed.append(res)
-                                list_stressed_syls.append(res_bin)
+                                
+                                try:
+                                    res = s.Syllabize(w)
+                                    res_bin = s.SyllList(w)
+                                    line_stressed.append(res)
+                                    list_stressed_syls.append(res_bin)
+                                except:
+                                    res = w
+                                    res_bin = [None]
+                                    line_stressed.append(res)
+                                    list_stressed_syls.append(res_bin)
                         if w.lower() in DOUBLE:
                             tag = tags_list[words.index(w)]
                             res = s.Syllabize_cases(w, tag)
@@ -371,23 +406,12 @@ def Accent():
         file_stressed.close()
         binary_vectors.close()
         stress_indices.close()
-    
-Accent()
+Accent()    
+#try:
+#    Accent()
+#except:
+#    pass
 
-
-# In[25]:
-
-text = 'try to avoid any conflict you should not conflict with other people'
-tokens = nltk.word_tokenize(text)
-tags_list = [z[1] for z in nltk.pos_tag(tokens)]
-
-
-# In[26]:
-
-tags_list
-
-
-# In[ ]:
 
 
 
